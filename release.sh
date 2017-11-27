@@ -171,7 +171,7 @@ function build() {
 
         # There is no arm for version 8.0 and 8.1
         if [ "$v" == "8.0" ] || [ "$v" == "8.1" ]; then
-            processors=[x86]
+            processors=x86
         fi
 
         for p in "${processors[@]}"; do
@@ -197,7 +197,7 @@ function push() {
 
         # There is no arm for version 8.0 and 8.1
         if [ "$v" == "8.0" ] || [ "$v" == "8.1" ]; then
-            processors=[x86]
+            processors=x86
         fi
 
         for p in "${processors[@]}"; do
