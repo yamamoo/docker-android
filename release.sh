@@ -10,7 +10,7 @@ else
 fi
 
 if [ -z "$2" ]; then
-    read -p "Android version (5.0.1|5.1.1|6.0|7.0|7.1.1|all): " ANDROID_VERSION
+    read -p "Android version (5.0.1|5.1.1|6.0|7.0|7.1.1|8.0|8.1|all): " ANDROID_VERSION
 else
     ANDROID_VERSION=$2
 fi
@@ -33,6 +33,8 @@ declare -A list_of_levels=(
         [6.0]=23
         [7.0]=24
         [7.1.1]=25
+        [8.0]=26
+        [8.1]=27
 )
 
 declare -A list_of_processors=(
@@ -96,7 +98,7 @@ function test() {
     test_android_version=7.1.1
     test_api_level=25
     test_processor=x86
-    test_sys_img=x86_64
+    test_sys_img=x86
     test_img_type=google_apis
     test_browser=chrome
     test_image=test_img
@@ -153,20 +155,26 @@ function build() {
     find . -name "*.pyc" -exec rm -f {} \;
 
     # Build docker image(s)
-    for p in "${processors[@]}"; do
-        for v in "${versions[@]}"; do
-            # Find image type and default web browser
-            if [ "$v" == "5.0.1" ] || [ "$v" == "5.1.1" ]; then
-                IMG_TYPE=default
-                BROWSER=browser
-            elif [ "$v" == "6.0" ]; then
-                # It is because there is no ARM EABI v7a System Image for 6.0
-                IMG_TYPE=google_apis
-                BROWSER=browser
-            else
-                IMG_TYPE=google_apis
-                BROWSER=chrome
-            fi
+    for v in "${versions[@]}"; do
+        # Find image type and default web browser
+        if [ "$v" == "5.0.1" ] || [ "$v" == "5.1.1" ]; then
+            IMG_TYPE=default
+            BROWSER=browser
+        elif [ "$v" == "6.0" ]; then
+            # It is because there is no ARM EABI v7a System Image for 6.0
+            IMG_TYPE=google_apis
+            BROWSER=browser
+        else
+            IMG_TYPE=google_apis
+            BROWSER=chrome
+        fi
+
+        # There is no arm for version 8.0 and 8.1
+        if [ "$v" == "8.0" ] || [ "$v" == "8.1" ]; then
+            processors=[x86]
+        fi
+
+        for p in "${processors[@]}"; do
             echo "[BUILD] IMAGE TYPE: $IMG_TYPE"
             level=${list_of_levels[$v]}
             echo "[BUILD] API Level: $level"
@@ -185,8 +193,14 @@ function build() {
 
 function push() {
     # Push docker image(s)
-    for p in "${processors[@]}"; do
-        for v in "${versions[@]}"; do
+    for v in "${versions[@]}"; do
+
+        # There is no arm for version 8.0 and 8.1
+        if [ "$v" == "8.0" ] || [ "$v" == "8.1" ]; then
+            processors=[x86]
+        fi
+
+        for p in "${processors[@]}"; do
             image_version="$IMAGE-$p-$v:$RELEASE"
             image_latest="$IMAGE-$p-$v:latest"
             echo "[PUSH] Image name: $image_version and $image_latest"
