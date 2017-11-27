@@ -154,12 +154,6 @@ function build() {
 
     # Build docker image(s)
     for p in "${processors[@]}"; do
-        if [ "$p" == "x86" ]; then
-            FILE_NAME=docker/Emulator_x86
-        else
-            FILE_NAME=docker/Emulator_arm
-        fi
-
         for v in "${versions[@]}"; do
             # Find image type and default web browser
             if [ "$v" == "5.0.1" ] || [ "$v" == "5.1.1" ]; then
@@ -181,10 +175,9 @@ function build() {
             image_version="$IMAGE-$p-$v:$RELEASE"
             image_latest="$IMAGE-$p-$v:latest"
             echo "[BUILD] Image name: $image_version and $image_latest"
-            echo "[BUILD] Dockerfile: $FILE_NAME"
             docker build -t $image_version --build-arg ANDROID_VERSION=$v --build-arg API_LEVEL=$level \
             --build-arg PROCESSOR=$p --build-arg SYS_IMG=$sys_img --build-arg IMG_TYPE=$IMG_TYPE \
-            --build-arg BROWSER=$BROWSER -f $FILE_NAME .
+            --build-arg BROWSER=$BROWSER -f docker/Emulator .
             docker tag $image_version $image_latest
         done
     done

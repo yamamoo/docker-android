@@ -36,6 +36,15 @@ WORKDIR /root
 #   Video recorder
 # jq
 #   Sed for JSON data
+#------------------
+#    KVM Package
+# for emulator x86
+# https://help.ubuntu.com/community/KVM/Installation
+#------------------
+# qemu-kvm
+# libvirt-bin
+# ubuntu-vm-builder
+# bridge-utils
 #==================
 RUN apt-get -qqy update && apt-get -qqy install --no-install-recommends \
     xterm \
@@ -48,6 +57,10 @@ RUN apt-get -qqy update && apt-get -qqy install --no-install-recommends \
     net-tools \
     ffmpeg \
     jq \
+    qemu-kvm \
+    libvirt-bin \
+    ubuntu-vm-builder \
+    bridge-utils \
  && rm -rf /var/lib/apt/lists/*
 
 #=======
@@ -87,8 +100,9 @@ RUN echo y | sdkmanager "platforms;android-${API_LEVEL}" && \
     echo y | sdkmanager "system-images;android-${API_LEVEL};${IMG_TYPE};${SYS_IMG}" && \
     echo y | sdkmanager "emulator"
 RUN rm ${ANDROID_HOME}/tools/emulator \
- && ln -s ${ANDROID_HOME}/emulator/emulator64-${PROCESSOR} ${ANDROID_HOME}/tools/emulator
+ && ln -s ${ANDROID_HOME}/emulator/emulator ${ANDROID_HOME}/tools/emulator
 ENV LD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib
+
 
 #==============================================
 #       Download chrome driver v2.26
