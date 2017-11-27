@@ -101,8 +101,6 @@ RUN echo y | sdkmanager "platforms;android-${API_LEVEL}" && \
     echo y | sdkmanager "emulator"
 RUN rm ${ANDROID_HOME}/tools/emulator \
  && ln -s ${ANDROID_HOME}/emulator/emulator ${ANDROID_HOME}/tools/emulator
-ENV LD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib
-
 
 #==============================================
 #       Download chrome driver v2.26

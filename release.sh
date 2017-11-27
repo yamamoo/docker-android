@@ -37,7 +37,7 @@ declare -A list_of_levels=(
 
 declare -A list_of_processors=(
         [arm]=armeabi-v7a
-        [x86]=x86_64
+        [x86]=x86
 )
 
 function get_android_versions() {
