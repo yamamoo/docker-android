@@ -45,6 +45,11 @@ WORKDIR /root
 # libvirt-bin
 # ubuntu-vm-builder
 # bridge-utils
+#------------------
+#  Clock
+#------------------
+# wmctrl
+#   Window title editing
 #==================
 RUN apt-get -qqy update && apt-get -qqy install --no-install-recommends \
     xterm \
@@ -61,6 +66,7 @@ RUN apt-get -qqy update && apt-get -qqy install --no-install-recommends \
     libvirt-bin \
     ubuntu-vm-builder \
     bridge-utils \
+    wmctrl \
  && rm -rf /var/lib/apt/lists/*
 
 #=======
